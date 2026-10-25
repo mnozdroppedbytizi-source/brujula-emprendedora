@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Brújula Emprendedora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Concepto: una brújula de decisiones. Columna única, una pregunta por pantalla con 12 marcas de avance, y un informe tipo dossier con siete secciones numeradas. */
+:root{
+  --bg:#F2F4F1;
+  --surface:#FFFFFF;
+  --ink:#101C17;
+  --muted:#56665E;
+  --line:#D6DDD8;
+  --accent:#0C6B52;
+  --on-accent:#FFFFFF;
+  --accent-soft:#DFF0E9;
+  --signal:#A85A0C;
+  --signal-soft:#FBEBD6;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'Figtree','Segoe UI',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1310;--surface:#121C17;--ink:#E6EFEA;--muted:#93A59B;--line:#243229;
+    --accent:#46D3A6;--on-accent:#05241A;--accent-soft:#14302A;--signal:#F0A24F;--signal-soft:#2B2012;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1310;--surface:#121C17;--ink:#E6EFEA;--muted:#93A59B;--line:#243229;
+  --accent:#46D3A6;--on-accent:#05241A;--accent-soft:#14302A;--signal:#F0A24F;--signal-soft:#2B2012;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+  padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit}
+h1,h2,h3,h4,p,ul,ol{margin:0}
+ul{padding:0;list-style:none}
+a{color:var(--accent);font-weight:600}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.shell{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+
+/* barra superior */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:4px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:21px;letter-spacing:-.01em}
+.brand svg{width:30px;height:30px;color:var(--ink)}
+.brand .n{fill:var(--signal)}
+.brand .s{fill:var(--ink)}
+.kicker{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* tarjetas y botones */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,4vw,36px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 22px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--on-accent);font-weight:600;font-size:16px;cursor:pointer;transition:transform .12s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.link{background:none;border:0;padding:10px 0;color:var(--muted);cursor:pointer;font-weight:500}
+.link:hover{color:var(--ink)}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* introducción */
+.intro h1{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,6.4vw,52px);line-height:1.04;letter-spacing:-.025em;text-wrap:balance;margin:14px 0 16px}
+.intro .lead{font-size:18px;max-width:58ch;color:var(--muted)}
+.areas{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:26px 0}
+.area{border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:baseline;background:var(--bg)}
+.area b{font-weight:600}
+.area span{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap}
+@media(max-width:560px){.areas{grid-template-columns:1fr}}
+.fine{font-size:13.5px;color:var(--muted);margin-top:16px}
+
+/* pregunta */
+.ticks{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.ticks i{height:6px;background:var(--line);border-radius:2px;display:block}
+.ticks i.done{background:var(--accent)}
+.ticks i.now{background:var(--signal)}
+.qmeta{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.qmeta .fu{color:var(--signal)}
+.qtitle{font-family:var(--f-display);font-weight:700;font-size:clamp(24px,4.6vw,32px);line-height:1.12;letter-spacing:-.02em;text-wrap:balance}
+.hint{color:var(--muted);margin-top:10px}
+.opts{display:flex;flex-direction:column;gap:10px;margin-top:24px}
+.opt{display:grid;grid-template-columns:30px 1fr;gap:14px;align-items:start;text-align:left;width:100%;padding:15px 16px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;font-size:16px;line-height:1.4;transition:border-color .12s,background .12s}
+.opt:hover{border-color:var(--accent)}
+.opt .l{font-family:var(--f-mono);font-size:13px;font-weight:500;width:28px;height:28px;border:1px solid var(--line);border-radius:6px;display:grid;place-items:center;color:var(--muted)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.sel .l{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.ask{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.ask label{font-weight:600;font-size:14.5px}
+.ask input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+.ask input:focus-visible{border-color:var(--accent)}
+.qfoot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap}
+.qfoot .kicker{text-transform:none;letter-spacing:.02em}
+@media(prefers-reduced-motion:no-preference){.qanim{animation:rise .28s ease both}@keyframes rise{from{opacity:.0;transform:translateY(6px)}to{opacity:1;transform:none}}}
+
+/* informe */
+.rhead{display:flex;flex-direction:column;gap:14px;padding:6px 0 4px}
+.rhead h1{font-family:var(--f-display);font-weight:700;font-size:clamp(32px,6vw,50px);line-height:1.04;letter-spacing:-.025em;text-wrap:balance}
+.rhead p{color:var(--muted);max-width:60ch}
+.jump{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 13px;font-size:13.5px;cursor:pointer;font-weight:500}
+.chip span{font-family:var(--f-mono);color:var(--signal);margin-right:6px}
+.chip:hover{border-color:var(--accent)}
+.sec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(20px,4vw,32px);display:flex;flex-direction:column;gap:20px;scroll-margin-top:16px}
+.sh{display:flex;align-items:baseline;gap:14px}
+.num{font-family:var(--f-mono);font-size:13px;color:var(--signal);font-weight:500;letter-spacing:.06em}
+.sh h2{font-family:var(--f-display);font-size:clamp(22px,4vw,28px);letter-spacing:-.015em;line-height:1.15;text-wrap:balance}
+.pname{font-family:var(--f-display);font-weight:700;font-size:clamp(28px,5.4vw,40px);letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+.tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--signal);margin-bottom:6px}
+.lead2{font-size:17.5px;max-width:62ch}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.fact{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--bg);min-width:0}
+.fact b{display:block;font-family:var(--f-mono);font-weight:500;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.fact span{font-weight:600;font-size:15px}
+@media(max-width:620px){.facts{grid-template-columns:repeat(2,1fr)}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.two>div{min-width:0}
+@media(max-width:620px){.two{grid-template-columns:1fr}}
+.sec h4{font-family:var(--f-mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.dots li{padding-left:18px;position:relative;margin-bottom:8px}
+.dots li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(120px,210px) 1fr;gap:12px;align-items:center;font-size:14.5px}
+.track{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.fill{height:100%;background:var(--accent);border-radius:4px}
+@media(max-width:480px){.bar{grid-template-columns:1fr;gap:4px}}
+.note{background:var(--signal-soft);border-radius:10px;padding:12px 14px;font-size:15px}
+.big{font-family:var(--f-display);font-weight:700;font-size:clamp(22px,4.4vw,30px);line-height:1.12;letter-spacing:-.015em;text-wrap:balance}
+.steps{display:flex;flex-direction:column}
+.steps li{display:grid;grid-template-columns:76px 1fr;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0;padding-top:0}
+.steps .tm{font-family:var(--f-mono);font-size:12px;color:var(--signal);font-weight:500;padding-top:3px}
+.steps b{display:block;font-weight:700;margin-bottom:2px}
+.steps p{color:var(--muted)}
+@media(max-width:480px){.steps li{grid-template-columns:1fr;gap:4px}}
+.script{background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:14px 16px;font-size:15px;margin-top:10px;color:var(--ink)}
+.month{display:grid;grid-template-columns:190px 1fr;gap:24px;padding:20px 0;border-top:1px solid var(--line)}
+.month:first-of-type{border-top:0;padding-top:0}
+.month h3{font-family:var(--f-display);font-size:20px;line-height:1.15;letter-spacing:-.01em}
+.month .rng{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.month ul li{padding-left:18px;position:relative;margin-bottom:9px}
+.month ul li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.goal{margin-top:12px;padding:11px 14px;border-radius:10px;background:var(--signal-soft);font-weight:500;font-size:15px}
+@media(max-width:620px){.month{grid-template-columns:1fr;gap:10px}}
+.mist li{padding:16px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:26px 1fr;gap:10px}
+.mist li:first-child{border-top:0;padding-top:0}
+.mist .x{font-family:var(--f-mono);color:var(--signal);font-weight:500;font-size:18px;line-height:1.3}
+.mist b{display:block;font-weight:700;margin-bottom:3px}
+.mist p{color:var(--muted)}
+.reslist li{display:grid;grid-template-columns:minmax(0,230px) 1fr;gap:16px;padding:12px 0;border-top:1px solid var(--line)}
+.reslist li:first-child{border-top:0}
+.reslist b{font-weight:600}
+.reslist p{color:var(--muted);font-size:15px}
+@media(max-width:560px){.reslist li{grid-template-columns:1fr;gap:2px}}
+.final{background:var(--ink);color:var(--bg);border-radius:14px;padding:clamp(22px,4vw,34px);display:flex;flex-direction:column;gap:18px}
+.final .big{color:var(--bg)}
+.final p{opacity:.9;max-width:60ch}
+.final .btn{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+.final .btn.ghost{background:transparent;color:var(--bg);border-color:var(--muted)}
+.copybox{width:100%;min-height:140px;font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+</head>
+<body>
+<div class="shell" id="root"></div>
+
+<script>
+"use strict";
+var LS_KEY = "brujula-emprendedora-v1";
+var LET = "ABCDEF";
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+
+/* ---------- Preguntas ---------- */
+var Q = [
+  { id:"sit", area:"Situación actual", q:"¿Cuál describe mejor tu situación laboral hoy?", opts:[
+    { t:"Tengo un trabajo de tiempo completo con ingreso estable", k:"ft" },
+    { t:"Trabajo medio tiempo o mis ingresos son irregulares", k:"pt" },
+    { t:"Estoy estudiando", k:"st" },
+    { t:"Estoy sin trabajo y busco ingresos", k:"un" },
+    { t:"Otra situación", k:"ot", ask:"Cuéntame tu situación en una línea" }
+  ]},
+  { id:"hours", area:"Situación actual", q:"¿Cuántas horas por semana puedes dedicar de verdad a un proyecto propio?", hint:"Cuenta solo las horas que puedes sostener, no las ideales.", opts:[
+    { t:"Menos de 5 horas", v:3 },
+    { t:"Entre 5 y 10 horas", v:8 },
+    { t:"Entre 10 y 20 horas", v:15 },
+    { t:"Más de 20 horas", v:30 }
+  ]},
+  { id:"cap", area:"Situación actual", q:"¿Cuánto dinero puedes invertir sin que sea un problema si lo pierdes?", hint:"Piensa en dólares. Es dinero que no necesitas para vivir.", opts:[
+    { t:"Casi nada (de USD 0 a 30)", v:0 },
+    { t:"Hasta USD 200", v:1 },
+    { t:"Entre USD 200 y USD 1.000", v:2 },
+    { t:"Más de USD 1.000", v:3 }
+  ]},
+  { id:"exp", area:"Situación actual", q:"¿Cuál es tu experiencia emprendiendo hasta hoy?", opts:[
+    { t:"Ninguna, es mi primera vez", v:0 },
+    { t:"Lo intenté antes y no funcionó", v:1 },
+    { t:"Vendí cosas o servicios de manera informal", v:2 },
+    { t:"Tengo o tuve un negocio en marcha", v:3 }
+  ]},
+  { id:"appr", area:"Personalidad y forma de trabajar", q:"Cuando no sabes si algo va a funcionar, ¿qué haces?", opts:[
+    { t:"Necesito un plan detallado antes de moverme", k:"plan", w:{analit:2} },
+    { t:"Pruebo algo pequeño, miro qué pasa y ajusto", k:"test", w:{analit:1,ejec:1} },
+    { t:"Me lanzo y corrijo sobre la marcha", k:"launch", w:{ejec:2} },
+    { t:"Prefiero seguir un método probado que me guíe", k:"method", w:{analit:1}, s:{oper:1} }
+  ]},
+  { id:"style", area:"Personalidad y forma de trabajar", q:"¿Cómo trabajas mejor?", opts:[
+    { t:"Solo, con concentración profunda", k:"solo", w:{analit:1,creat:1} },
+    { t:"Hablando y colaborando con otras personas", k:"team", w:{rel:2} },
+    { t:"Con rutinas, listas y objetivos claros", k:"routine", w:{analit:1,ejec:1}, s:{oper:1} },
+    { t:"Con libertad, variedad y cambiando de actividad", k:"free", w:{creat:2} }
+  ]},
+  { id:"sales", area:"Personalidad y forma de trabajar", q:"¿Qué sientes al ofrecerle algo tuyo a una persona que no conoces?", opts:[
+    { t:"Me bloquea, prefiero evitarlo", v:0 },
+    { t:"Me da nervios, pero lo hago", v:1, w:{ejec:1} },
+    { t:"Me siento cómodo", v:2, w:{rel:1,ejec:1} },
+    { t:"Lo disfruto, me da energía", v:3, w:{rel:2,ejec:1} }
+  ]},
+  { id:"skill", area:"Habilidades e intereses", q:"¿Qué habilidad te describe mejor hoy?", hint:"Elige la que otras personas más te reconocen, aunque no la hayas cobrado nunca.", opts:[
+    { t:"Comunicar, explicar, escribir o crear contenido", k:"contenido", s:{contenido:3}, w:{creat:1,rel:1} },
+    { t:"Organizar, ordenar y planificar", k:"oper", s:{oper:3}, w:{analit:2} },
+    { t:"Manejar tecnología, herramientas digitales o datos", k:"tecnico", s:{tecnico:3}, w:{analit:1,creat:1} },
+    { t:"Trabajar con las manos o dominar un oficio", k:"oficio", s:{oficio:3}, w:{ejec:1} },
+    { t:"Vender, negociar y convencer", k:"ventas", s:{ventas:3}, w:{rel:1,ejec:1} }
+  ]},
+  { id:"int", area:"Habilidades e intereses", q:"¿Qué temas te hacen perder la noción del tiempo?", opts:[
+    { t:"Educación y ayudar a otros a mejorar", k:"edu", s:{contenido:1}, w:{rel:1} },
+    { t:"Tecnología y automatización", k:"tech", s:{tecnico:1} },
+    { t:"Diseño, arte y estética", k:"design", s:{contenido:1}, w:{creat:1} },
+    { t:"Comida, hogar y servicios locales", k:"local", s:{oficio:1} },
+    { t:"Negocios, finanzas y marketing", k:"biz", s:{ventas:1,oper:1} },
+    { t:"Otro interés", k:"other", ask:"Cuéntame cuál es en pocas palabras" }
+  ]},
+  { id:"urg", area:"Mis objetivos", q:"¿Cuándo necesitas que tu proyecto empiece a darte ingresos?", opts:[
+    { t:"En 30 a 60 días, lo necesito pronto", v:3 },
+    { t:"En 3 a 6 meses", v:2 },
+    { t:"En 6 a 12 meses", v:1 },
+    { t:"No tengo urgencia, prefiero construir bien a largo plazo", v:0 }
+  ]},
+  { id:"goal", area:"Mis objetivos", q:"¿Qué quieres lograr con tu emprendimiento?", opts:[
+    { t:"Un ingreso extra de USD 200 a 500 por mes", k:"extra" },
+    { t:"Reemplazar mi ingreso actual", k:"replace" },
+    { t:"Construir una empresa que crezca y escale", k:"scale" },
+    { t:"Tener libertad de tiempo y de lugar", k:"free" }
+  ]},
+  { id:"block", area:"Mis objetivos", q:"¿Qué es lo que más te frena hoy?", opts:[
+    { t:"Miedo a fallar o a quedar mal", k:"fear" },
+    { t:"No sé qué negocio elegir", k:"idea" },
+    { t:"Falta de dinero", k:"money" },
+    { t:"Falta de tiempo", k:"time" },
+    { t:"Me falta conocimiento o experiencia", k:"knowledge" }
+  ]}
+];
+
+var FU = [
+  { id:"fu_service", after:"urg", area:"Aclaración",
+    q:"Necesitas ingresos pronto y partes casi sin capital. ¿Estarías dispuesto a vender un servicio con lo que ya sabes, antes de crear un producto?",
+    hint:"Es el camino más rápido para cobrar con poco dinero. Quiero saber si te sirve antes de armar tu plan.",
+    opts:[
+      { t:"Sí, estoy dispuesto a ofrecer un servicio", k:"yes" },
+      { t:"Prefiero vender productos físicos o reventa", k:"product" },
+      { t:"Todavía no lo sé", k:"unsure" }
+    ],
+    show:function(a){ var c=optOf(a,"cap"), u=optOf(a,"urg"); return !!(c&&u&&c.v===0&&u.v===3); } },
+  { id:"fu_sales", after:"skill", area:"Aclaración",
+    q:"Dijiste que ofrecer algo a desconocidos te bloquea. ¿Qué es lo que más pesa?",
+    hint:"La respuesta cambia cómo armo tus primeros 30 días.",
+    opts:[
+      { t:"Miedo al rechazo", k:"reject" },
+      { t:"No sé cómo hablar de precios", k:"price" },
+      { t:"No sé qué decir ni cómo empezar la conversación", k:"script" },
+      { t:"Siento que no tengo nada que valga la pena ofrecer", k:"worth" }
+    ],
+    show:function(a){ var s=optOf(a,"sales"); return !!(s&&s.v===0); } },
+  { id:"fu_time", after:"goal", area:"Aclaración",
+    q:"Quieres reemplazar tu ingreso, pero hoy tienes menos de 5 horas por semana. ¿Qué estás dispuesto a hacer?",
+    hint:"Con ese tiempo, el objetivo y el plan no coinciden. Elige el ajuste que sí vas a sostener.",
+    opts:[
+      { t:"Liberar tiempo (dejar compromisos o negociar horarios)", k:"free" },
+      { t:"Ir por etapas y aceptar un camino de 12 a 18 meses", k:"stages" },
+      { t:"Por ahora aspirar a un ingreso complementario", k:"partial" }
+    ],
+    show:function(a){ var g=optOf(a,"goal"), h=optOf(a,"hours"); return !!(g&&h&&g.k==="replace"&&h.v===3); } }
+];
+var ALL = Q.concat(FU);
+function optOf(a,id){ var q=null,i; for(i=0;i<ALL.length;i++){ if(ALL[i].id===id){ q=ALL[i]; break; } } return (q&&a[id]!=null)?q.opts[a[id]]:null; }
+function qById(id){ for(var i=0;i<ALL.length;i++){ if(ALL[i].id===id) return ALL[i]; } return null; }
+
+/* ---------- Estado ---------- */
+var S = { view:"intro", a:{}, tx:{}, pos:0, lock:false, copyFallback:false, confirmReset:false };
+function load(){
+  try{ var r=localStorage.getItem(LS_KEY); if(r){ var o=JSON.parse(r); S.a=o.a||{}; S.tx=o.tx||{}; S.pos=o.pos||0; } }catch(e){}
+}
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({a:S.a,tx:S.tx,pos:S.pos})); }catch(e){} }
+function flow(){
+  var f=[], i, j;
+  for(i=0;i<Q.length;i++){
+    f.push(Q[i].id);
+    for(j=0;j<FU.length;j++){ if(FU[j].after===Q[i].id && FU[j].show(S.a)) f.push(FU[j].id); }
+  }
+  return f;
+}
+function answeredOk(id){
+  var q=qById(id); if(!q||S.a[id]==null) return false;
+  var op=q.opts[S.a[id]]; if(op.ask && !(S.tx[id]&&S.tx[id].trim().length>=2)) return false;
+  return true;
+}
+function firstOpen(){ var f=flow(); for(var i=0;i<f.length;i++){ if(!answeredOk(f[i])) return i; } return f.length; }
+function isComplete(){ return firstOpen()>=flow().length; }
+
+/* ---------- Contenido del informe ---------- */
+var ARCH = {
+  ejec:{ name:"El Ejecutor", tag:"Aprendes haciendo",
+    strengths:["Avanzas sin esperar condiciones perfectas","Te adaptas rápido cuando algo no funciona","Conviertes ideas en acciones concretas"],
+    blind:"Tu riesgo es moverte rápido sin validar y gastar energía o dinero en algo que nadie pidió." },
+  analit:{ name:"El Estratega Metódico", tag:"Piensas antes de mover",
+    strengths:["Detectas riesgos y detalles que otros pasan por alto","Sostienes procesos y los mejoras con constancia","Decides con criterio y no por impulso"],
+    blind:"Tu riesgo es planificar de más y retrasar el primer contacto real con un cliente." },
+  creat:{ name:"El Creador Independiente", tag:"Necesitas libertad para crear",
+    strengths:["Generas ideas y formas distintas de resolver problemas","Le das identidad y diferencia a lo que haces","Te motivas por el sentido y la autonomía"],
+    blind:"Tu riesgo es dispersarte entre ideas y abandonar antes de que algo madure." },
+  rel:{ name:"El Conector", tag:"Tu activo son las personas",
+    strengths:["Generas confianza rápido","Escuchas, negocias y consigues referidos","Rindes más acompañado que solo"],
+    blind:"Tu riesgo es depender de la aprobación de otros y dudar al fijar precios." }
+};
+var SK = {
+  contenido:{ name:"Comunicación y creación de contenido",
+    why:"Sabes explicar, escribir o crear piezas que captan atención. Todo negocio necesita esa habilidad y pocos la hacen bien.",
+    money:["Vender el servicio de crear contenido a negocios que no tienen tiempo","Convertir tu conocimiento en guías, talleres o plantillas","Construir una audiencia propia que reduzca tu costo de conseguir clientes"] },
+  oper:{ name:"Organización y gestión",
+    why:"Ordenas, planificas y haces que las cosas funcionen. Las empresas pequeñas pierden dinero por desorden, y tú puedes resolverlo.",
+    money:["Vender horas de gestión como paquete mensual (agenda, administración, atención)","Crear sistemas y plantillas que le ahorren tiempo a otros","Pasar de ejecutar tareas a coordinar un equipo pequeño"] },
+  tecnico:{ name:"Habilidad técnica y digital",
+    why:"Dominas herramientas, datos o tecnología. Tus clientes no necesitan entender cómo lo haces, solo ver que su problema desaparece.",
+    money:["Resolver un problema concreto de pymes con automatización o herramientas sin código","Crear una plantilla, sistema o herramienta para un nicho","Cobrar mantenimiento mensual una vez entregado el trabajo"] },
+  oficio:{ name:"Oficio y trabajo práctico",
+    why:"Sabes hacer algo con las manos o con criterio técnico. Tiene demanda local, genera confianza rápido y es difícil de reemplazar.",
+    money:["Ofrecer un servicio con paquete cerrado y precio visible","Pasar de trabajos sueltos a mantenimiento recurrente","Mostrar tu trabajo con fotos y reseñas para que te elijan antes que a la competencia"] },
+  ventas:{ name:"Ventas y negociación",
+    why:"Te sientes cómodo vendiendo y negociando. Es la habilidad que más falta en los emprendimientos nuevos y la que más acelera los ingresos.",
+    money:["Vender por comisión productos o servicios de otros mientras aprendes un nicho","Ofrecer prospección y cierre a negocios que no tienen quién venda","Usar tu habilidad para lanzar un producto propio con clientes ya identificados"] }
+};
+var SK_REINFORCE = {
+  contenido:"Vender. El contenido que no lleva a una venta se queda en pasatiempo. Aprende a cerrar con una propuesta simple.",
+  oper:"Comunicar tu valor. Aprende a explicar en una frase cuánto tiempo o dinero le ahorras al cliente.",
+  tecnico:"Hablar el idioma del cliente. Vende resultados (más ventas, menos horas), no herramientas.",
+  oficio:"Presencia digital y precios. Un perfil con fotos, reseñas y paquetes claros multiplica tu demanda local.",
+  ventas:"Seguimiento y operación. Cerrar es la mitad: entregar bien y pedir referidos es lo que sostiene el ingreso."
+};
+var INT_NICHE = {
+  edu:"academias, docentes y personas que enseñan",
+  tech:"pymes que quieren digitalizarse",
+  design:"marcas pequeñas y estudios creativos",
+  local:"comercios y servicios de tu zona",
+  biz:"emprendedores y negocios que quieren vender más",
+  other:"negocios pequeños de tu entorno"
+};
+var INT_NAME = {
+  edu:"educación y ayuda a otros", tech:"tecnología y automatización", design:"diseño, arte y estética",
+  local:"comida, hogar y servicios locales", biz:"negocios, finanzas y marketing", other:"tu propio interés"
+};
+var BIZ = {
+  servicio:{ name:"Servicio profesional de nicho",
+    short:"Vendes tu habilidad como un paquete con precio fijo y un resultado claro.",
+    offer:{
+      contenido:"Gestión de contenido para negocios locales: calendario mensual, 12 piezas y un reporte, a precio fijo.",
+      tecnico:"Automatización y orden digital para pymes: planillas manuales convertidas en flujos automáticos, un sitio simple o un tablero de datos, en un paquete cerrado.",
+      ventas:"Prospección y agenda de reuniones para negocios que no tienen quién venda, con pago fijo más comisión por cierre."
+    },
+    ideas:{
+      contenido:["Paquete mensual de 12 publicaciones y respuesta de mensajes para comercios de barrio","Edición de video corto o diseño de piezas para marcas pequeñas","Redacción de textos de venta y newsletters para profesionales independientes"],
+      tecnico:["Automatizar turnos, presupuestos o seguimiento de clientes con herramientas sin código","Armar tableros de ventas y gastos en hojas de cálculo para pymes","Crear sitios o tiendas simples con mantenimiento mensual"],
+      ventas:["Agendar reuniones comerciales para estudios y consultorios a cambio de una comisión","Venta por comisión de un producto o servicio de otro emprendedor","Seguimiento de clientes potenciales para negocios con muchas consultas sin responder"]
+    },
+    m1:["Elige un nicho concreto (un tipo de cliente y un problema) y escribe tu oferta con precio y plazo.","Arma una muestra de trabajo: un caso real, gratis, con alguien conocido que te dé un testimonio."],
+    m2:["Contacta 10 prospectos nuevos por semana con un mensaje corto y una propuesta de una página.","Cierra los primeros clientes con precio fijo y cobra por adelantado al menos el 50%."],
+    m3:["Convierte tu servicio en un paquete repetible: proceso escrito, plantillas y tiempos de entrega.","Sube el precio con cada cliente nuevo, pide 2 referidos por cliente y decide si sumas un segundo paquete."],
+    tools:["workana","upwork","canva","calendly"] },
+  oficio:{ name:"Servicio especializado basado en un oficio",
+    short:"Vendes un trabajo que hacen tus manos o tu criterio técnico, con demanda local y recurrente.",
+    offer:"Un servicio acotado con visita programada, precio de paquete y garantía simple, atendido en una zona definida.",
+    ideas:["Mantenimiento o reparación a domicilio con visita programada y precio de paquete","Producción por encargo (comida, repostería, carpintería, costura) con pedidos semanales","Servicio recurrente para comercios: limpieza técnica, arreglos, instalación o mantenimiento mensual"],
+    m1:["Define un servicio acotado con precio cerrado y zona de atención.","Documenta tu trabajo con fotos de antes y después de 3 trabajos reales."],
+    m2:["Publica tu servicio en grupos locales y en WhatsApp Business, y pide una reseña desde el primer cliente.","Ofrece un paquete de mantenimiento mensual a tus primeros clientes para generar ingreso recurrente."],
+    m3:["Fija una agenda semanal con días de trabajo y días de ventas, para no vivir de lo urgente.","Calcula tu costo real por hora y ajusta precios. Evalúa sumar un ayudante o un segundo servicio."],
+    tools:["wabiz","canva","sheets","calendly"] },
+  comercio:{ name:"Comercio de nicho con poco stock",
+    short:"Vendes productos seleccionados para un público específico, sin comprar grandes lotes al inicio.",
+    offer:"Una línea corta de 5 a 10 productos para un cliente específico, vendida por pedido o preventa antes de comprar stock.",
+    ideas:["Reventa de un nicho que conoces (ropa, accesorios, productos de bienestar) comprando por pedido","Producto propio simple, hecho en tiradas pequeñas (velas, packs de regalo, accesorios)","Venta de productos de proveedores locales con tu curaduría y presentación"],
+    m1:["Elige un nicho y un tipo de cliente. Compara 3 proveedores y calcula tu margen real con envío y comisiones.","Haz una preventa o lista de espera con 5 a 10 productos antes de comprar stock."],
+    m2:["Vende en un solo canal (marketplace o redes con WhatsApp) y mide consultas, ventas y margen por unidad.","Reinvierte solo lo que ganas. No compres más stock hasta repetir 2 ventas por producto."],
+    m3:["Elimina los productos que no rotan y duplica los que sí. Arma un catálogo corto y claro.","Define reposición, tiempos de entrega y política de cambios para dar confianza y conseguir recompra."],
+    tools:["tiendanube","meli","wabiz","sheets"] },
+  audiencia:{ name:"Contenido con audiencia y producto digital simple",
+    short:"Construyes confianza con contenido útil sobre un tema y después vendes algo simple: guía, plantilla, taller o mentoría.",
+    offer:"Un tema, un canal y un primer producto pequeño (guía, plantilla o taller) que resuelve un problema puntual de tu público.",
+    ideas:["Newsletter o cuenta temática con una guía o plantilla paga","Taller en vivo de 90 minutos sobre un problema puntual, con grabación","Mentoría grupal pequeña para un tipo específico de persona"],
+    m1:["Elige un tema y una persona concreta. Publica 3 veces por semana durante 4 semanas en un solo canal.","Habla con 5 personas de tu público para saber qué problema pagarían por resolver."],
+    m2:["Lanza una preventa de un producto pequeño (guía, plantilla o taller) a precio de lanzamiento.","Ofrece una sesión de diagnóstico paga para financiar tu tiempo mientras la audiencia crece."],
+    m3:["Convierte lo que mejor funcionó en una serie fija y arma una lista de correo.","Define una escalera de productos: uno gratis, uno económico y uno de mayor valor."],
+    tools:["mailerlite","canva","notion","gumroad"] },
+  producto:{ name:"Producto digital o herramienta para un nicho",
+    short:"Resuelves un problema repetitivo de un nicho con una herramienta, plantilla o automatización.",
+    offer:"Una versión mínima de una herramienta o plantilla que ahorra tiempo en una tarea repetitiva de un nicho, cobrada desde el primer usuario.",
+    ideas:["Plantillas y sistemas listos para usar (finanzas de un oficio, gestión de turnos, tableros)","Una automatización o app simple sin código para un problema que hoy se hace a mano","Una integración o bot pequeño que se cobre por suscripción"],
+    m1:["Elige un problema que alguien resuelve hoy a mano y confirma en 8 conversaciones que ya paga o pagaría por resolverlo.","Construye una versión mínima en menos de 10 días, con herramientas sin código si puedes."],
+    m2:["Entrégala a 3 a 5 usuarios reales y cobra desde el inicio, aunque sea un precio simbólico.","Mide uso real y no elogios: qué hacen, qué dejan de usar y qué piden."],
+    m3:["Corrige las 3 fricciones principales y automatiza la entrega y el cobro.","Define precio mensual o por licencia y un canal de adquisición repetible."],
+    tools:["zapier","gumroad","notion","sheets"] },
+  gestion:{ name:"Gestión y operaciones para otros",
+    short:"Ordenas lo que otros no pueden o no quieren ordenar: agendas, administración, atención y procesos.",
+    offer:"Un paquete mensual con tareas definidas, horas incluidas y precio fijo para un tipo de cliente.",
+    ideas:["Asistente virtual para profesionales: agenda, correo, facturación y seguimiento","Administración de redes y atención al cliente para comercios con paquete mensual","Orden operativo de pymes: procesos, tableros y control de stock o turnos"],
+    m1:["Elige un tipo de cliente (consultorios, estudios, comercios, creadores) y lista las tareas que más tiempo les quitan.","Arma un paquete con tareas, horas incluidas y precio mensual."],
+    m2:["Ofrece una prueba paga de 2 semanas a 3 clientes y documenta el resultado en horas ahorradas.","Cierra un acuerdo mensual recurrente con pago anticipado."],
+    m3:["Escribe tus procesos y plantillas para que cada tarea se repita en menos tiempo.","Sube a 3 a 5 clientes y define un tope de horas para no saturarte. Evalúa sumar a alguien."],
+    tools:["notion","calendly","sheets","zapier"] }
+};
+var CONTACTS = {
+  servicio:"dueños de negocios y profesionales que conozcas, sigas o te hayan recomendado",
+  oficio:"vecinos, comercios y grupos locales de tu zona",
+  comercio:"personas del nicho que compran o preguntan en grupos y redes",
+  audiencia:"personas que ya consumen contenido sobre tu tema",
+  producto:"personas que hoy resuelven a mano el problema que quieres atacar",
+  gestion:"profesionales y comercios con la agenda saturada"
+};
+var RES = {
+  momtest:{ kind:"Libros", name:"The Mom Test (Rob Fitzpatrick)", why:"Cómo hablar con clientes y obtener información útil sin que te mientan por cortesía. Disponible en inglés, busca también su edición en español." },
+  hundred:{ kind:"Libros", name:"The $100 Startup (Chris Guillebeau)", why:"Casos de negocios que arrancaron con muy poco dinero. Encaja con tu presupuesto." },
+  lean:{ kind:"Libros", name:"The Lean Startup (Eric Ries)", why:"El ciclo construir, medir y aprender para validar sin gastar de más." },
+  atomic:{ kind:"Libros", name:"Hábitos atómicos (James Clear)", why:"Para sostener la constancia cuando tu tiempo es limitado o cuando el miedo frena el primer paso." },
+  influence:{ kind:"Libros", name:"Las armas de la persuasión (Robert Cialdini)", why:"Entender cómo deciden las personas cuando compran te ayuda a perder el miedo a vender." },
+  rework:{ kind:"Libros", name:"Rework (Jason Fried y David Heinemeier Hansson)", why:"Mentalidad de negocio pequeño: simple, rentable y sin esperar financiamiento." },
+  notion:{ kind:"Herramientas", name:"Notion", url:"https://www.notion.so", why:"Tablero de prospectos, tareas y plantillas en un solo lugar." },
+  canva:{ kind:"Herramientas", name:"Canva", url:"https://www.canva.com", why:"Propuestas, presentaciones y piezas visuales sin contratar diseñador." },
+  calendly:{ kind:"Herramientas", name:"Calendly", url:"https://calendly.com", why:"Agenda reuniones con clientes sin intercambiar veinte mensajes." },
+  workana:{ kind:"Herramientas", name:"Workana", url:"https://www.workana.com", why:"Plataforma de freelancers en español para conseguir tus primeros proyectos." },
+  upwork:{ kind:"Herramientas", name:"Upwork", url:"https://www.upwork.com", why:"Plataforma global de servicios profesionales, útil si quieres clientes que paguen en dólares." },
+  wabiz:{ kind:"Herramientas", name:"WhatsApp Business", url:"https://business.whatsapp.com", why:"Catálogo, respuestas rápidas y etiquetas para vender por chat." },
+  tiendanube:{ kind:"Herramientas", name:"Tiendanube", url:"https://www.tiendanube.com", why:"Tienda online simple para empezar a vender sin programar." },
+  meli:{ kind:"Herramientas", name:"Mercado Libre", url:"https://www.mercadolibre.com", why:"Marketplace para probar demanda sin armar tu propia tienda." },
+  gumroad:{ kind:"Herramientas", name:"Gumroad", url:"https://gumroad.com", why:"Vende productos digitales sin infraestructura propia." },
+  mailerlite:{ kind:"Herramientas", name:"MailerLite", url:"https://www.mailerlite.com", why:"Newsletter y lista de correo para convertir audiencia en clientes." },
+  zapier:{ kind:"Herramientas", name:"Zapier", url:"https://zapier.com", why:"Automatiza tareas repetitivas entre aplicaciones sin programar." },
+  sheets:{ kind:"Herramientas", name:"Google Sheets", url:"https://docs.google.com/spreadsheets/", why:"Tu primer CRM y tu control de ingresos y gastos, gratis." },
+  startup:{ kind:"Formación", name:"Startup School (Y Combinator)", url:"https://www.startupschool.org", why:"Curso gratuito en línea con charlas de fundadores sobre validar, vender y crecer." }
+};
+
+var HLAB = { 3:"menos de 5 h por semana", 8:"5 a 10 h por semana", 15:"10 a 20 h por semana", 30:"más de 20 h por semana" };
+var CLAB = ["USD 0 a 30","hasta USD 200","USD 200 a 1.000","más de USD 1.000"];
+var ULAB = ["Sin urgencia","6 a 12 meses","3 a 6 meses","30 a 60 días"];
+var ELAB = ["Primera vez","Intento previo","Ventas informales","Negocio previo"];
+
+/* ---------- Derivación ---------- */
+function derive(){
+  var fl=flow(), set={}, a=S.a, i;
+  for(i=0;i<fl.length;i++) set[fl[i]]=true;
+  function o(id){ return (set[id]&&a[id]!=null)?optOf(a,id):null; }
+  function g(id,f){ var op=o(id); return op?op[f]:undefined; }
+  var T={ejec:0,analit:0,creat:0,rel:0}, K={contenido:0,oper:0,tecnico:0,oficio:0,ventas:0};
+  fl.forEach(function(id){
+    var op=o(id); if(!op) return;
+    var w=op.w||{}, s=op.s||{}, k;
+    for(k in w) T[k]+=w[k];
+    for(k in s) K[k]+=s[k];
+  });
+  var d={ T:T, K:K,
+    sit:g("sit","k"), sitTx:S.tx.sit||"",
+    hours:g("hours","v"), cap:g("cap","v"), exp:g("exp","v"),
+    appr:g("appr","k"), style:g("style","k"), sales:g("sales","v"),
+    skill:g("skill","k"), int:g("int","k"), intTx:S.tx.int||"",
+    urg:g("urg","v"), goal:g("goal","k"), block:g("block","k"),
+    fuS:g("fu_service","k"), fuSales:g("fu_sales","k"), fuTime:g("fu_time","k") };
+  d.hoursEff = d.fuTime==="free" ? Math.max(d.hours,8) : d.hours;
+  d.goalEff = d.fuTime==="partial" ? "extra" : d.goal;
+  return d;
+}
+function pct(v,max){ return Math.max(10, Math.round(100*v/Math.max(1,max))); }
+
+function buildReport(){
+  var d=derive(), T=d.T, K=d.K;
+  K[d.skill]+=0.5;
+  var skillKeys=Object.keys(K).sort(function(x,y){ return K[y]-K[x]; });
+  var sk=skillKeys[0];
+  var order=["ejec","analit","creat","rel"];
+  var tr=order.slice().sort(function(x,y){ return (T[y]-T[x])||(order.indexOf(x)-order.indexOf(y)); });
+  var arch=ARCH[tr[0]];
+  var hLab=HLAB[d.hoursEff], capLab=CLAB[d.cap];
+  var niche = d.int==="other" ? (INT_NICHE.other) : INT_NICHE[d.int];
+  var intName = d.int==="other" ? (d.intTx||"tu propio interés") : INT_NAME[d.int];
+
+  /* 1. Perfil */
+  var sitS={
+    ft:"Tienes un ingreso estable, y eso es una ventaja grande: puedes validar sin presión y sin decidir por desesperación.",
+    pt:"Con ingresos irregulares, tu prioridad es sumar una fuente que se pueda repetir, no hacer una apuesta grande.",
+    st:"Estás estudiando: tu mayor activo es el tiempo flexible y el bajo costo de equivocarte. Úsalos.",
+    un:"Estás sin trabajo y buscas ingresos, así que tu plan tiene que generar caja pronto. Eso define casi todo lo que sigue.",
+    ot:"Tu situación"+(d.sitTx?" ("+d.sitTx.trim()+")":"")+" condiciona el plan, así que lo ajusté al tiempo y al capital que indicaste."
+  }[d.sit];
+  var apprS={
+    plan:"Prefieres entender antes de moverte. Es una fortaleza si le pones fecha límite al análisis.",
+    test:"Pruebas en pequeño y ajustas, que es justo cómo se construye un negocio sin quemar dinero.",
+    launch:"Te lanzas y corriges. Es una ventaja si la combinas con validación temprana.",
+    method:"Funcionas mejor con un método probado, por eso tu plan va paso a paso y con metas semanales."
+  }[d.appr];
+  var expS=[
+    "Empiezas de cero, y está bien: no tienes malos hábitos que desaprender.",
+    "Ya lo intentaste una vez, y eso te da información que la mayoría no tiene. Úsala.",
+    "Ya vendiste de manera informal, es decir que sabes lo más difícil: que alguien te pague.",
+    "Ya tienes experiencia con un negocio, así que puedes saltarte lo básico y enfocarte en estructura y crecimiento."
+  ][d.exp];
+  var profile={
+    name:arch.name, tag:arch.tag,
+    summary:"Eres "+arch.name+". Cuentas con "+hLab+" y "+capLab+" para invertir. "+sitS+" "+apprS+" "+expS,
+    strengths:arch.strengths, blind:arch.blind,
+    traits:[
+      {l:"Ejecución y acción", pct:pct(T.ejec,Math.max(T.ejec,T.analit,T.creat,T.rel))},
+      {l:"Análisis y método", pct:pct(T.analit,Math.max(T.ejec,T.analit,T.creat,T.rel))},
+      {l:"Creatividad y autonomía", pct:pct(T.creat,Math.max(T.ejec,T.analit,T.creat,T.rel))},
+      {l:"Relaciones y comunicación", pct:pct(T.rel,Math.max(T.ejec,T.analit,T.creat,T.rel))}
+    ],
+    facts:[
+      {l:"Tiempo", v:hLab.replace(" por semana","/sem")},
+      {l:"Capital", v:capLab},
+      {l:"Urgencia", v:ULAB[d.urg]},
+      {l:"Experiencia", v:ELAB[d.exp]}
+    ]
+  };
+
+  /* 2. Habilidad */
+  var maxK=Math.max.apply(null, skillKeys.map(function(k){ return K[k]; }));
+  var skNote="";
+  if(sk==="ventas" && d.sales<=1) skNote="Marcaste ventas como tu habilidad, pero ofrecer a desconocidos te incomoda. Lo leo así: vendes bien cuando hay confianza. Empieza por tu círculo cercano y por referidos, y deja a los desconocidos para el mes 2.";
+  var reinforce = d.sales<=1 && sk!=="ventas"
+    ? "Perder el miedo a ofrecer. Es la habilidad que multiplica todas las demás, y se entrena con repetición: 10 conversaciones cambian cómo te sientes."
+    : SK_REINFORCE[sk];
+  var skill={
+    name:SK[sk].name,
+    why:SK[sk].why+" Tu interés en "+intName+" te da un nicho natural para empezar.",
+    note:skNote,
+    money:SK[sk].money,
+    bars:skillKeys.map(function(k){ return {l:SK[k].name, pct:pct(K[k],maxK)}; }),
+    reinforce:reinforce
+  };
+
+  /* 3. Negocio */
+  var B={servicio:0,oficio:0,comercio:0,audiencia:0,producto:0,gestion:0};
+  var ALIGN={oficio:"oficio",oper:"gestion",ventas:"comercio",contenido:"audiencia",tecnico:"producto"};
+  if(sk==="contenido"||sk==="tecnico"||sk==="ventas") B.servicio+=1;
+  if(d.urg>=2) B.servicio+=2;
+  if(d.cap<=1) B.servicio+=2;
+  if(d.hours>=8) B.servicio+=1;
+  if(d.fuS==="yes") B.servicio+=2;
+  if(sk==="oficio") B.oficio+=4;
+  if(d.int==="local") B.oficio+=1;
+  if(d.sales>=1) B.oficio+=1;
+  if(d.urg>=2) B.oficio+=1;
+  if(sk==="ventas") B.comercio+=3;
+  if(d.cap>=2) B.comercio+=1;
+  if(d.int==="design"||d.int==="local"||d.int==="biz") B.comercio+=1;
+  if(d.sales>=2) B.comercio+=1;
+  if(d.cap===0) B.comercio-=2;
+  if(d.fuS==="product") B.comercio+=2;
+  if(sk==="contenido") B.audiencia+=3;
+  if(d.urg<=1) B.audiencia+=2;
+  if(T.creat>=2) B.audiencia+=1;
+  if(d.int==="edu"||d.int==="design") B.audiencia+=1;
+  if(d.urg===3) B.audiencia-=3;
+  if(d.hours<=3) B.audiencia-=1;
+  if(sk==="tecnico") B.producto+=3;
+  if(d.urg<=1) B.producto+=2;
+  if(d.hours>=15) B.producto+=1;
+  if(d.goalEff==="scale") B.producto+=1;
+  if(d.int==="tech") B.producto+=1;
+  if(d.urg===3) B.producto-=3;
+  if(sk==="oper") B.gestion+=4;
+  if(T.analit>=2) B.gestion+=1;
+  if(d.urg>=2) B.gestion+=1;
+  if(d.cap<=1) B.gestion+=1;
+  B[ALIGN[sk]]+=0.5;
+  var ranked=Object.keys(B).sort(function(x,y){ return B[y]-B[x]; });
+  var bz=ranked[0], bz2=ranked[1], bd=BIZ[bz];
+  var offer = bz==="servicio" ? (bd.offer[sk]||bd.offer.tecnico) : bd.offer;
+  var ideas = bz==="servicio" ? (bd.ideas[sk]||bd.ideas.tecnico) : bd.ideas;
+  var reasons=[];
+  reasons.push(d.urg>=2 ? "Necesitas ingresos en menos de 6 meses, y este modelo permite cobrar en semanas, no en meses." : "No tienes urgencia, así que puedes cuidar la calidad y el precio desde el inicio.");
+  if(bz==="comercio" && d.cap<=1) reasons.push("Con poco capital, la clave es vender por pedido o preventa y no comprar stock hasta tener demanda.");
+  else reasons.push(d.cap<=1 ? "Casi no requiere inversión: tu activo principal es tu tiempo y tu habilidad." : "Tu capital permite probar con un presupuesto controlado, que liberaremos por tramos.");
+  reasons.push("Se apoya en tu mejor habilidad: "+SK[sk].name.toLowerCase()+".");
+  reasons.push(d.sales<=1 ? "Permite empezar con conversaciones pequeñas y cercanas, la mejor forma de ganar soltura vendiendo." : "Tu comodidad para vender acelera la validación: puedes hablar con más clientes en menos tiempo.");
+  if(d.hours<=3) reasons.push("Con pocas horas necesitas una sola oferta y un solo canal, y este modelo lo permite.");
+  var biz={
+    name:bd.name, short:bd.short, offer:offer, ideas:ideas,
+    niche:"Nicho sugerido por tu interés en "+intName+": "+niche+".",
+    reasons:reasons,
+    planB:BIZ[bz2].name+". Evalúalo después del día 90, cuando tengas datos reales de lo que te piden tus clientes.",
+    key:bz
+  };
+
+  /* 4. Por dónde empezar */
+  var script="Hola [nombre], estoy empezando un proyecto de [tu servicio] para "+niche+". ¿Me regalas 10 minutos para contarme cómo resuelves hoy [el problema]? No te voy a vender nada, solo quiero entender cómo lo viven.";
+  var firstCharge = d.urg===3 ? "Tu primer cobro tiene fecha: antes del día 30." : (d.urg===2 ? "Tu primer cobro tiene fecha: antes del día 60." : "Tu primera venta real tiene fecha: antes del día 75.");
+  var budget=[
+    "Presupuesto máximo del trimestre: USD 30. Usa solo herramientas gratuitas.",
+    "Presupuesto máximo del trimestre: USD 150, y solo después de tu primera venta.",
+    "Presupuesto máximo del trimestre: USD 500, repartido en tramos que liberas tras cada venta validada.",
+    "Presupuesto máximo del trimestre: USD 1.000, y no más del 25% antes de tu tercera venta."
+  ][d.cap];
+  var start={
+    steps:[
+      { time:"20 min", t:"Escribe tu oferta en una frase", d:"Ayudo a "+niche+" a lograr [resultado medible] en [plazo], por un precio fijo de [monto]. Si no puedes completar los corchetes, ya sabes qué preguntarle a tus primeros clientes." },
+      { time:"40 min", t:"Arma tu lista de 20 contactos", d:"Busca "+CONTACTS[bz]+". Anota nombre, cómo llegar a esa persona y qué problema crees que tiene." },
+      { time:"30 min", t:"Envía los primeros 5 mensajes hoy", d:d.sales<=1 ? "Usa este guion tal cual. Copiarlo no es trampa, es práctica:" : "Usa este guion como base y adáptalo a tu estilo:", script:script }
+    ],
+    rule:firstCharge+" "+budget,
+    measure:["Conversaciones con potenciales clientes","Propuestas o presupuestos enviados","Ventas cerradas y dinero cobrado"],
+    closing:"Tienes "+hLab+", "+capLab+" y una habilidad concreta. Con eso alcanza para una primera venta. Lo que decide el resultado es la primera conversación, y puedes tenerla esta semana."
+      +(d.exp===1?" Ya lo intentaste una vez, así que esta vez empiezas sabiendo qué evitar.":"")
+      +(d.block==="fear"?" El miedo baja con la acción: mide tu avance por conversaciones, no por resultados.":"")
+  };
+
+  /* 5. Plan de 90 días */
+  var nConv=[8,10,12,15][d.sales];
+  var split = d.hoursEff<=3 ? "Con tan pocas horas, tu ventaja es el foco: una oferta, un canal y un tipo de cliente. Reparte 1 h para hablar con clientes, 1,5 h para producir y 0,5 h para revisar números."
+    : d.hoursEff<=8 ? "Reparte: 3 h para hablar con clientes, 4 h para producir o entregar y 1 h para revisar números y aprender."
+    : d.hoursEff<=15 ? "Reparte: 6 h para clientes, 7 h para producir o entregar y 2 h para números y aprendizaje."
+    : "Reparte: 10 h para clientes, 15 h para producir o entregar, 3 h para números y 2 h para aprendizaje.";
+  var timeItem="Tu tiempo: "+HLAB[d.hoursEff]+". "+split+(d.fuTime==="free"?" Antes de empezar, libera al menos 5 horas fijas por semana: es la condición para que este plan funcione.":"");
+  var salesTip = {
+    reject:"Tu meta de la primera semana es conseguir 5 respuestas negativas. Cuando el «no» es un objetivo, deja de dar miedo.",
+    price:"Habla de precio con paquetes cerrados: «Incluye X, Y y Z por $N». Ensaya la frase en voz alta 10 veces antes de usarla.",
+    script:"Usa el guion de la sección «Por dónde empezar» en tus primeras 10 conversaciones y ajústalo con lo que aprendas.",
+    worth:"Pide a 3 personas que te conocen qué problema suyo les has resuelto. Suele revelar tu oferta real. Después ofrece una primera tarea de bajo riesgo."
+  }[d.fuSales] || (d.sales===1 ? "Los nervios son normales. Con 10 conversaciones bajan mucho. Empieza por tu círculo cercano." : "Aprovecha tu comodidad para hablar: 2 llamadas o notas de voz por día con personas de tu lista.");
+  var urgItem = d.urg===3 ? "Prioridad del mes: el primer cobro antes del día 45. Cobra aunque sea poco y ajusta el precio después."
+    : d.urg===2 ? "Prioridad del mes: primera venta antes del día 60 y repetirla con un segundo cliente."
+    : "Prioridad del mes: una venta real antes del día 75, aunque tu modelo sea de largo plazo. Valida con dinero, no con opiniones.";
+  var goalItem = {
+    extra:"Ordena tu semana para sostener el ingreso extra con el mínimo tiempo: un horario fijo de entrega y otro de ventas.",
+    replace:"Define tu número: cuánto necesitas facturar al mes para reemplazar tu ingreso y a cuántos clientes o ventas equivale.",
+    scale:"Documenta cada proceso que repites. Lo que no se documenta no se puede delegar ni escalar.",
+    free:"Identifica las 3 tareas que más tiempo te consumen y decide si se automatizan, se delegan o se eliminan."
+  }[d.goalEff];
+  var sitTip = {
+    ft:"No dejes tu empleo hasta que el negocio cubra al menos el 50% de tu sueldo durante 3 meses seguidos.",
+    pt:"Usa tus horas libres más fijas para clientes y deja las irregulares para tareas que se pueden mover.",
+    st:"Bloquea 2 franjas fijas por semana compatibles con tu estudio y no las muevas.",
+    un:"Destina las primeras ganancias a cubrir gastos esenciales antes de reinvertir.",
+    ot:"Define 2 franjas fijas por semana para este proyecto y trátalas como compromisos con otra persona."
+  }[d.sit];
+  var clients2=[1,2,2,3][d.urg];
+  var inc2={extra:"USD 100 a 200", replace:"USD 150 a 300", scale:"USD 100 a 300", free:"USD 100 a 250"}[d.goalEff];
+  var g3={
+    extra:"Meta del mes: USD 200 a 400 de ingreso y un sistema que te lleve menos de "+HLAB[d.hoursEff].replace(" por semana","")+" por semana.",
+    replace:"Meta del mes: cubrir entre el 25% y el 30% de tu ingreso actual con el negocio, y tener un plan a 12 meses para llegar al 100%.",
+    scale:"Meta del mes: 5 clientes o ventas recurrentes, un proceso documentado y un canal que traiga clientes sin que tengas que pedir cada vez.",
+    free:"Meta del mes: que la mitad de tus tareas repetitivas estén documentadas o automatizadas, y 2 clientes recurrentes."
+  }[d.goalEff]+(d.fuTime==="stages"?" Con tu ritmo actual, este es el primer tramo de un camino de 12 a 18 meses.":"");
+  var plan=[
+    { t:"Definir y validar", rng:"Días 1 a 30", items:[bd.m1[0],bd.m1[1],salesTip,timeItem],
+      goal:"Meta del mes: "+nConv+" conversaciones con potenciales clientes y una oferta escrita con precio." },
+    { t:"Vender", rng:"Días 31 a 60", items:[bd.m2[0],bd.m2[1],urgItem,budget],
+      goal:"Meta del mes: "+clients2+(clients2===1?" cliente o venta paga":" clientes o ventas pagas")+". Ingreso de referencia: "+inc2+"." },
+    { t:"Ordenar y crecer", rng:"Días 61 a 90", items:[bd.m3[0],bd.m3[1],goalItem,sitTip], goal:g3 }
+  ];
+
+  /* 6. Errores */
+  var P=[];
+  function add(p,t,fix){ P.push({p:p,t:t,fix:fix}); }
+  if(d.block==="fear") add(10,"Esperar a sentirte listo para empezar","La confianza se construye después de las primeras ventas. Fija una fecha para tu primera conversación con un cliente y cúmplela aunque sientas que falta algo.");
+  if(d.block==="idea") add(10,"Buscar la idea perfecta","Parte de tu habilidad en "+SK[sk].name.toLowerCase()+" y de personas que ya conoces. Elige la oferta más simple y mejórala con clientes reales. Con 3 conversaciones sabrás más que con 3 semanas de ideas.");
+  if(d.block==="money") add(10,"Gastar antes de vender","Nada de logo, web, stock ni cursos pagos hasta tu primera venta. Con "+capLab+" disponibles, la restricción es una ventaja: te obliga a validar primero.");
+  if(d.block==="time") add(10,"Querer hacer todo con pocas horas","Una oferta, un canal y un tipo de cliente. Todo lo demás espera al día 90.");
+  if(d.block==="knowledge") add(10,"Acumular cursos en lugar de vender","Por cada hora de formación, dedica dos a hablar con clientes o a entregar algo. Aprendes lo que necesites cuando un cliente lo pide.");
+  if(d.sales<=1) add(9,"Esconderte detrás del trabajo en vez de hablar con clientes","Preparar, diseñar y «mejorar» es más cómodo que ofrecer. Fija una cuota semanal de conversaciones y revísala cada domingo.");
+  if(d.urg===3 && (bz==="audiencia"||bz==="producto")) add(9,"Elegir un modelo lento cuando necesitas caja rápida","Si necesitas ingresos pronto, vende primero un servicio simple y deja la audiencia o el producto para después.");
+  if(d.fuS==="product" && d.cap===0) add(9,"Comprar mercadería antes de validar la demanda","Con tan poco capital, vende por pedido o preventa. Compra al proveedor solo cuando el cliente ya pagó.");
+  if(d.fuS==="unsure") add(8,"Dudar entre servicio y producto","Decide por 30 días: vende un servicio y observa qué te piden. Esa información te dice qué producto crear después.");
+  if(d.appr==="launch") add(8,"Lanzarte sin validar","Tu impulso es valioso, dirígelo. Antes de producir, consigue una promesa de compra o una preventa.");
+  if(d.appr==="plan") add(8,"Sobreplanificar","Una página de plan es suficiente. Si llevas más de 7 días sin hablar con un cliente, el plan se volvió una excusa.");
+  if(d.exp===1) add(8,"Repetir el patrón de tu intento anterior","Revisa con honestidad por qué no funcionó: no lograste vender, no había demanda o no sostuviste el esfuerzo. Cambia esa variable concreta esta vez.");
+  if(d.sit==="ft" && (d.goalEff==="replace"||d.goalEff==="scale")) add(7,"Renunciar demasiado pronto","No dejes tu ingreso estable hasta que el negocio cubra al menos el 50% de tu sueldo durante 3 meses seguidos.");
+  if(d.cap>=2) add(6,"Usar el capital como sustituto de la validación","Tener dinero tienta a contratar y comprar antes de tiempo. Reparte la inversión en tramos y libera cada uno cuando haya una venta validada.");
+  add(5,"Cobrar barato por inseguridad","Un precio bajo atrae clientes difíciles y no te deja crecer. Cobra lo que te permita entregar bien y súbelo con cada cliente nuevo.");
+  add(4,"No medir","Cada semana revisa 3 números: conversaciones, propuestas y ventas. Si no sabes dónde se cae el proceso, no sabes qué arreglar.");
+  P.sort(function(x,y){ return y.p-x.p; });
+  var mistakes=P.slice(0,5).map(function(m){ return {t:m.t, fix:m.fix}; });
+
+  /* 7. Recursos */
+  var b1="momtest";
+  var b2 = d.sales<=1 ? "influence" : (d.cap<=1 ? "hundred" : "lean");
+  var b3 = (d.hoursEff<=8 || d.block==="time" || d.block==="fear") ? "atomic" : "rework";
+  var res={
+    libros:[b1,b2,b3].map(function(k){ return RES[k]; }),
+    herr:bd.tools.map(function(k){ return RES[k]; }),
+    form:[RES.startup],
+    note:"Antes de cobrar de forma continua, infórmate sobre el régimen de pequeños contribuyentes de tu país. Suele ser un trámite simple y te evita problemas cuando empieces a crecer."
+  };
+
+  return { profile:profile, skill:skill, biz:biz, start:start, plan:plan, mistakes:mistakes, res:res };
+}
+
+/* ---------- Vistas ---------- */
+function topbar(label){
+  return '<div class="top"><div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1.8"/><path class="n" d="M16 5 L20 16 L12 16 Z"/><path class="s" d="M16 27 L20 16 L12 16 Z"/></svg>Brújula</div><span class="kicker">'+esc(label)+'</span></div>';
+}
+function viewIntro(){
+  var counts={}, order=[], i;
+  for(i=0;i<Q.length;i++){ if(!counts[Q[i].area]){ counts[Q[i].area]=0; order.push(Q[i].area); } counts[Q[i].area]++; }
+  var areas=order.map(function(n){ return '<div class="area"><b>'+esc(n)+'</b><span>'+counts[n]+' preguntas</span></div>'; }).join("");
+  var answered=flow().filter(answeredOk).length;
+  var main, second="";
+  if(isComplete()){ main='<button class="btn" data-act="report">Ver mi informe</button>'; second='<button class="btn ghost" data-act="reset">'+(S.confirmReset?"Pulsa otra vez para borrar mis respuestas":"Rehacer el test")+'</button>'; }
+  else if(answered>0){ main='<button class="btn" data-act="start">Continuar donde lo dejé</button>'; second='<button class="btn ghost" data-act="reset">'+(S.confirmReset?"Pulsa otra vez para borrar mis respuestas":"Empezar de nuevo")+'</button>'; }
+  else main='<button class="btn" data-act="start">Empezar el test</button>';
+  return '<div class="card intro qanim"><p class="kicker">Test de orientación · 12 preguntas · unos 6 minutos</p>'
+    +'<h1>Descubre por dónde empezar tu primer negocio</h1>'
+    +'<p class="lead">Respondes una pregunta a la vez. Si una respuesta necesita contexto, te pregunto antes de seguir. Al final recibes un informe con tu perfil, tu tipo de negocio ideal y un plan de 90 días.</p>'
+    +'<div class="areas">'+areas+'</div>'
+    +'<div class="row">'+main+second+'</div>'
+    +'<p class="fine">Tus respuestas se guardan solo en este navegador.</p></div>';
+}
+function viewQ(){
+  var fl=flow(); if(S.pos>=fl.length) S.pos=fl.length-1; if(S.pos<0) S.pos=0;
+  var id=fl[S.pos], q=qById(id), isFU=!!q.after;
+  var baseId=isFU?q.after:q.id, baseIdx=0, i;
+  for(i=0;i<Q.length;i++){ if(Q[i].id===baseId){ baseIdx=i; break; } }
+  var done=isFU?baseIdx+1:baseIdx;
+  var ticks="";
+  for(i=0;i<Q.length;i++){ ticks+='<i class="'+(i<done?"done":(i===baseIdx&&!isFU?"now":""))+'"></i>'; }
+  var sel=S.a[id];
+  var opts=q.opts.map(function(op,k){
+    return '<button class="opt'+(sel===k?" sel":"")+'" data-act="opt" data-i="'+k+'"><span class="l">'+LET[k]+'</span><span>'+esc(op.t)+'</span></button>';
+  }).join("");
+  var ask="";
+  if(sel!=null && q.opts[sel].ask){
+    var val=S.tx[id]||"";
+    ask='<div class="ask"><label for="askText">'+esc(q.opts[sel].ask)+'</label><input id="askText" type="text" maxlength="140" autocomplete="off" value="'+esc(val)+'"><div class="row"><button class="btn" id="askGo" data-act="cont"'+(val.trim().length>=2?"":" disabled")+'>Continuar</button></div></div>';
+  }
+  var label=isFU?'Aclaración antes de seguir':'Pregunta '+(baseIdx+1)+' de '+Q.length;
+  return '<div class="ticks" aria-hidden="true">'+ticks+'</div>'
+    +'<div class="card qanim" id="qcard"><div class="qmeta"><span class="kicker'+(isFU?' fu':'')+'">'+esc(label)+'</span><span class="kicker">'+esc(q.area)+'</span></div>'
+    +'<h2 class="qtitle">'+esc(q.q)+'</h2>'+(q.hint?'<p class="hint">'+esc(q.hint)+'</p>':'')
+    +'<div class="opts">'+opts+'</div>'+ask
+    +'<div class="qfoot"><button class="link" data-act="back">← Atrás</button><span class="kicker">Atajo: pulsa la letra de tu respuesta</span></div></div>';
+}
+function listHtml(arr,cls){ return '<ul class="'+cls+'">'+arr.map(function(x){ return '<li>'+esc(x)+'</li>'; }).join("")+'</ul>'; }
+function barsHtml(arr){ return '<div class="bars">'+arr.map(function(b){ return '<div class="bar"><span>'+esc(b.l)+'</span><div class="track"><div class="fill" style="width:'+b.pct+'%"></div></div></div>'; }).join("")+'</div>'; }
+function resGroup(title,arr){
+  return '<div><h4>'+esc(title)+'</h4><ul class="reslist">'+arr.map(function(r){
+    var nm=r.url?'<a href="'+esc(r.url)+'" target="_blank" rel="noopener">'+esc(r.name)+'</a>':esc(r.name);
+    return '<li><b>'+nm+'</b><p>'+esc(r.why)+'</p></li>';
+  }).join("")+'</ul></div>';
+}
+function sec(n,id,title,inner){ return '<section class="sec" id="'+id+'"><header class="sh"><span class="num">'+n+'</span><h2>'+esc(title)+'</h2></header>'+inner+'</section>'; }
+function viewReport(){
+  var R=buildReport(), p=R.profile, s=R.skill, b=R.biz, st=R.start;
+  var names=["Perfil","Habilidad","Negocio","Inicio","Plan 90 días","Errores","Recursos"];
+  var jump=names.map(function(n,i){ return '<button class="chip" data-act="jump" data-to="s'+(i+1)+'"><span>0'+(i+1)+'</span>'+esc(n)+'</button>'; }).join("");
+  var head='<div class="rhead qanim"><p class="kicker">Informe personalizado</p><h1>Tu punto de partida, según tus 12 respuestas</h1><p>Cada recomendación sale de lo que respondiste: tu tiempo, tu capital, tu forma de trabajar y lo que necesitas lograr.</p><div class="jump">'+jump+'</div></div>';
+  var s1=sec("01","s1","Mi perfil emprendedor",
+    '<div><p class="tag">'+esc(p.tag)+'</p><h3 class="pname">'+esc(p.name)+'</h3></div>'
+    +'<p class="lead2">'+esc(p.summary)+'</p>'
+    +'<div class="facts">'+p.facts.map(function(f){ return '<div class="fact"><b>'+esc(f.l)+'</b><span>'+esc(f.v)+'</span></div>'; }).join("")+'</div>'
+    +'<div class="two"><div><h4>Tus fortalezas</h4>'+listHtml(p.strengths,"dots")+'</div><div><h4>Tu punto ciego</h4><p>'+esc(p.blind)+'</p></div></div>'
+    +'<div><h4>Peso relativo de cada rasgo en tu perfil</h4>'+barsHtml(p.traits)+'</div>');
+  var s2=sec("02","s2","La habilidad que más se adapta a mí",
+    '<h3 class="big">'+esc(s.name)+'</h3><p class="lead2">'+esc(s.why)+'</p>'+(s.note?'<p class="note">'+esc(s.note)+'</p>':'')
+    +'<div class="two"><div><h4>Cómo convertirla en dinero</h4>'+listHtml(s.money,"dots")+'</div><div><h4>Qué reforzar primero</h4><p>'+esc(s.reinforce)+'</p></div></div>'
+    +'<div><h4>Tus habilidades, de mayor a menor encaje</h4>'+barsHtml(s.bars)+'</div>');
+  var s3=sec("03","s3","El tipo de negocio ideal para mí",
+    '<h3 class="big">'+esc(b.name)+'</h3><p class="lead2">'+esc(b.short)+'</p>'
+    +'<div class="two"><div><h4>Por qué encaja contigo</h4>'+listHtml(b.reasons,"dots")+'</div><div><h4>Tu primera oferta</h4><p>'+esc(b.offer)+'</p><p class="fine">'+esc(b.niche)+'</p></div></div>'
+    +'<div><h4>Ideas concretas para arrancar</h4>'+listHtml(b.ideas,"dots")+'</div>'
+    +'<p class="note"><b>Plan B:</b> '+esc(b.planB)+'</p>');
+  var s4=sec("04","s4","Por dónde empezar",
+    '<p class="lead2">Tus próximas 48 horas. Son tres acciones y suman menos de 2 horas.</p>'
+    +'<ul class="steps">'+st.steps.map(function(x){
+      return '<li><span class="tm">'+esc(x.time)+'</span><div><b>'+esc(x.t)+'</b><p>'+esc(x.d)+'</p>'+(x.script?'<div class="script">'+esc(x.script)+'</div>':'')+'</div></li>';
+    }).join("")+'</ul>'
+    +'<p class="note"><b>Regla de oro:</b> '+esc(st.rule)+'</p>'
+    +'<div><h4>Qué medir cada semana</h4>'+listHtml(st.measure,"dots")+'</div>');
+  var s5=sec("05","s5","Mi plan de 90 días",
+    '<div>'+R.plan.map(function(m){
+      return '<div class="month"><div><p class="rng">'+esc(m.rng)+'</p><h3>'+esc(m.t)+'</h3></div><div>'+listHtml(m.items,"")+'<p class="goal">'+esc(m.goal)+'</p></div></div>';
+    }).join("")+'</div>');
+  var s6=sec("06","s6","Errores que debo evitar",
+    '<ul class="mist">'+R.mistakes.map(function(m){ return '<li><span class="x">×</span><div><b>'+esc(m.t)+'</b><p>'+esc(m.fix)+'</p></div></li>'; }).join("")+'</ul>');
+  var s7=sec("07","s7","Recursos recomendados",
+    resGroup("Libros",R.res.libros)+resGroup("Herramientas",R.res.herr)+resGroup("Formación gratuita",R.res.form)+'<p class="note">'+esc(R.res.note)+'</p>');
+  var fallback=S.copyFallback?'<textarea class="copybox" id="copybox" readonly>'+esc(toText(R))+'</textarea>':"";
+  var fin='<div class="final"><h3 class="big">'+esc("Tu siguiente paso")+'</h3><p>'+esc(st.closing)+'</p>'
+    +'<div class="row"><button class="btn" id="copyBtn" data-act="copy">Copiar mi informe</button><button class="btn ghost" data-act="review">Revisar mis respuestas</button><button class="btn ghost" data-act="reset">'+(S.confirmReset?"Pulsa otra vez para borrar":"Rehacer el test")+'</button></div>'+fallback+'</div>';
+  return head+s1+s2+s3+s4+s5+s6+s7+fin;
+}
+function toText(R){
+  var L=[], p=R.profile, s=R.skill, b=R.biz, st=R.start;
+  L.push("BRÚJULA EMPRENDEDORA · MI INFORME","");
+  L.push("1. MI PERFIL EMPRENDEDOR", p.name+" ("+p.tag+")", p.summary, "Fortalezas: "+p.strengths.join("; "), "Punto ciego: "+p.blind, "");
+  L.push("2. LA HABILIDAD QUE MÁS ME ADAPTA", s.name, s.why);
+  if(s.note) L.push(s.note);
+  L.push("Cómo monetizarla: "+s.money.join("; "), "Reforzar: "+s.reinforce, "");
+  L.push("3. NEGOCIO IDEAL", b.name, b.short, "Primera oferta: "+b.offer, b.niche, "Por qué: "+b.reasons.join(" "), "Ideas: "+b.ideas.join("; "), "Plan B: "+b.planB, "");
+  L.push("4. POR DÓNDE EMPEZAR");
+  st.steps.forEach(function(x,i){ L.push((i+1)+") ["+x.time+"] "+x.t+": "+x.d+(x.script?" «"+x.script+"»":"")); });
+  L.push("Regla de oro: "+st.rule, "Medir cada semana: "+st.measure.join("; "), "");
+  L.push("5. PLAN DE 90 DÍAS");
+  R.plan.forEach(function(m){ L.push(m.rng+" · "+m.t); m.items.forEach(function(x){ L.push("- "+x); }); L.push(m.goal); });
+  L.push("","6. ERRORES QUE DEBO EVITAR");
+  R.mistakes.forEach(function(m){ L.push("- "+m.t+": "+m.fix); });
+  L.push("","7. RECURSOS");
+  R.res.libros.concat(R.res.herr,R.res.form).forEach(function(r){ L.push("- "+r.name+(r.url?" ("+r.url+")":"")+": "+r.why); });
+  L.push(R.res.note,"",st.closing);
+  return L.join("\n");
+}
+
+/* ---------- Render y eventos ---------- */
+function render(opts){
+  opts=opts||{};
+  var root=document.getElementById("root"), html;
+  if(S.view==="intro") html=topbar("Para quienes empiezan de cero")+viewIntro();
+  else if(S.view==="q") html=topbar("Test en curso")+viewQ();
+  else html=topbar("Informe personalizado")+viewReport();
+  root.innerHTML=html;
+  if(opts.top){ try{ window.scrollTo(0,0); }catch(e){} }
+  if(S.view==="q"){
+    var sel=S.a[flow()[S.pos]], q=qById(flow()[S.pos]);
+    if(sel!=null && q.opts[sel].ask && opts.focusAsk){ var inp=document.getElementById("askText"); if(inp) inp.focus(); }
+  }
+}
+function goNext(){
+  S.pos++;
+  if(S.pos>=flow().length){ S.view="report"; }
+  save(); render({top:true});
+}
+function pick(i){
+  var fl=flow(), id=fl[S.pos], q=qById(id);
+  if(S.lock||!q||i<0||i>=q.opts.length) return;
+  S.a[id]=i; S.confirmReset=false; save();
+  if(q.opts[i].ask){ render({focusAsk:true}); return; }
+  S.lock=true; render();
+  setTimeout(function(){ S.lock=false; goNext(); }, 240);
+}
+function doCopy(){
+  var R=buildReport(), txt=toText(R), btn=document.getElementById("copyBtn");
+  function ok(){ if(btn){ btn.textContent="Copiado"; setTimeout(function(){ if(btn) btn.textContent="Copiar mi informe"; },1800); } }
+  function fail(){ S.copyFallback=true; render(); var t=document.getElementById("copybox"); if(t){ t.focus(); t.select(); } }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(ok,fail); }
+    else fail();
+  }catch(e){ fail(); }
+}
+function resetAll(){
+  if(!S.confirmReset){ S.confirmReset=true; render(); return; }
+  S.a={}; S.tx={}; S.pos=0; S.view="intro"; S.confirmReset=false; S.copyFallback=false; save(); render({top:true});
+}
+function onClick(e){
+  var el=e.target.closest?e.target.closest("[data-act]"):null; if(!el) return;
+  var act=el.getAttribute("data-act");
+  if(act==="start"){ S.view="q"; S.pos=Math.min(firstOpen(),flow().length-1); S.confirmReset=false; render({top:true}); }
+  else if(act==="opt"){ pick(parseInt(el.getAttribute("data-i"),10)); }
+  else if(act==="cont"){ if(!el.disabled) goNext(); }
+  else if(act==="back"){ if(S.pos<=0){ S.view="intro"; } else { S.pos--; } render({top:true}); }
+  else if(act==="report"){ S.view="report"; render({top:true}); }
+  else if(act==="review"){ S.view="q"; S.pos=0; render({top:true}); }
+  else if(act==="reset"){ resetAll(); }
+  else if(act==="copy"){ doCopy(); }
+  else if(act==="jump"){
+    var t=document.getElementById(el.getAttribute("data-to"));
+    if(t){ var reduce=false; try{ reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(x){} t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"}); }
+  }
+}
+function onInput(e){
+  if(e.target && e.target.id==="askText"){
+    var id=flow()[S.pos]; S.tx[id]=e.target.value; save();
+    var go=document.getElementById("askGo"); if(go) go.disabled=!(e.target.value.trim().length>=2);
+  }
+}
+function onKey(e){
+  if(S.view!=="q") return;
+  if(e.target && e.target.id==="askText"){
+    if(e.key==="Enter"){ var go=document.getElementById("askGo"); if(go && !go.disabled){ e.preventDefault(); goNext(); } }
+    return;
+  }
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  var idx=LET.indexOf((e.key||"").toUpperCase());
+  if(e.key && e.key.length===1 && idx>=0) pick(idx);
+}
+function init(){
+  load();
+  document.addEventListener("click",onClick);
+  document.addEventListener("input",onInput);
+  document.addEventListener("keydown",onKey);
+  render();
+}
+if(typeof document!=="undefined" && document.getElementById && !(typeof window!=="undefined" && window.__BRUJULA_TEST__)) init();
+</script>
+</body>
+</html>
